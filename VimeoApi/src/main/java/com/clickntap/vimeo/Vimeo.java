@@ -26,6 +26,10 @@ public class Vimeo {
 		return apiRequest("/me/videos", HttpGet.METHOD_NAME);
 	}
 
+	public JSONObject uploadVideo() throws Exception {
+		return apiRequest("/me/videos", HttpPost.METHOD_NAME);
+	}
+
 	private JSONObject apiRequest(String endpoint, String methodName) throws IOException, ClientProtocolException, UnsupportedEncodingException, JSONException {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
