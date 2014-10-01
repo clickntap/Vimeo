@@ -45,9 +45,4 @@ public class Vimeo {
 		client.close();
 		return new JSONObject(json);
 	}
-
-	public static void main(String[] args) throws Exception {
-		Vimeo vimeo = new Vimeo("");
-		System.out.println(vimeo.getVideos().toString(2));
-	}
 }
