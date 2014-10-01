@@ -34,9 +34,9 @@ public class Vimeo {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
 		if (methodName.equals(HttpGet.METHOD_NAME)) {
-			request = new HttpGet(VIMEO_SERVER + endpoint);
+			request = new HttpGet(new StringBuffer(VIMEO_SERVER).append(endpoint).toString());
 		} else if (methodName.equals(HttpPost.METHOD_NAME)) {
-			request = new HttpPost(VIMEO_SERVER + endpoint);
+			request = new HttpPost(new StringBuffer(VIMEO_SERVER).append(endpoint).toString());
 		}
 		request.addHeader("Authorization", new StringBuffer("bearer ").append(bearerToken).toString());
 		request.addHeader("Accept", "application/vnd.vimeo.*+json; version=3.2");
