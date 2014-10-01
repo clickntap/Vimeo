@@ -47,7 +47,7 @@ public class Vimeo {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Vimeo vimeo = new Vimeo("43f9dad9af69ca1d5e9a9158439f02d8");
+		Vimeo vimeo = new Vimeo("--");
 		System.out.println(vimeo.getVideos().toString(2));
 	}
 }
