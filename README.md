@@ -1,4 +1,4 @@
-vimeo
+Vimeo
 =====
 
 Java SDK for Vimeo API 3.0
