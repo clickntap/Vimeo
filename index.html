@@ -38,6 +38,48 @@
 <p>Then you'll need to generate an Access Token with upload access.
 The generated Token is all you need to use the Java Vimeo API 3.0.</p>
 
+<div class="highlight highlight-python"><pre>
+<span class="n">package</span> <span class="n">com</span><span class="o">.</span><span class="n">clickntap</span><span class="o">.</span><span class="n">vimeo</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.File</span><span class="p">;</span>
+
+<span class="n">public</span> <span class="k">class</span> <span class="nc">VimeoSample</span> <span class="p">{</span>
+
+  <span class="n">public</span> <span class="n">static</span> <span class="n">void</span> <span class="n">main</span><span class="p">(</span><span class="n">String</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span> <span class="n">throws</span> <span class="ne">Exception</span> <span class="p">{</span>
+    <span class="n">Vimeo</span> <span class="n">vimeo</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Vimeo</span><span class="p">(</span><span class="s">"[token]"</span><span class="p">);</span> 
+
+    <span class="o">//</span><span class="n">add</span> <span class="n">a</span> <span class="n">video</span>
+    <span class="n">boolean</span> <span class="n">upgradeTo1080</span> <span class="o">=</span> <span class="n">true</span><span class="p">;</span>
+    <span class="n">String</span> <span class="n">videoEndPoint</span> <span class="o">=</span> <span class="n">vimeo</span><span class="o">.</span><span class="n">addVideo</span><span class="p">(</span><span class="n">new</span> <span class="n">File</span><span class="p">(</span><span class="s">"/Users/tmendici/Downloads/Video.AVI"</span><span class="p">),</span> <span class="n">upgradeTo1080</span><span class="p">);</span>
+
+    <span class="o">//</span><span class="n">get</span> <span class="n">video</span> <span class="n">info</span>
+    <span class="n">VimeoResponse</span> <span class="n">info</span> <span class="o">=</span> <span class="n">vimeo</span><span class="o">.</span><span class="n">getVideoInfo</span><span class="p">(</span><span class="n">videoEndPoint</span><span class="p">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">println</span><span class="p">(</span><span class="n">info</span><span class="p">);</span>
+
+    <span class="o">//</span><span class="n">edit</span> <span class="n">video</span>
+    <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Name"</span><span class="p">;</span>
+    <span class="n">String</span> <span class="n">desc</span> <span class="o">=</span> <span class="s">"Description"</span><span class="p">;</span>
+    <span class="n">String</span> <span class="n">license</span> <span class="o">=</span> <span class="s">""</span> <span class="o">//</span><span class="n">see</span> <span class="n">Vimeo</span> <span class="n">API</span> <span class="n">Documentation</span>
+    <span class="n">String</span> <span class="n">privacyView</span> <span class="o">=</span> <span class="s">"nobody"</span><span class="p">;</span> <span class="o">//</span><span class="n">see</span> <span class="n">Vimeo</span> <span class="n">API</span> <span class="n">Documentation</span>
+    <span class="n">String</span> <span class="n">privacyEmbed</span> <span class="o">=</span> <span class="s">"whitelist"</span><span class="p">;</span> <span class="o">//</span><span class="n">see</span> <span class="n">Vimeo</span> <span class="n">API</span> <span class="n">Documentation</span>
+    <span class="n">boolean</span> <span class="n">reviewLink</span> <span class="o">=</span> <span class="n">false</span><span class="p">;</span>
+    <span class="n">vimeo</span><span class="o">.</span><span class="n">updateVideoMetadata</span><span class="p">(</span><span class="n">videoEndPoint</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">license</span><span class="p">,</span> <span class="n">privacyView</span><span class="p">,</span> <span class="n">privacyEmbed</span><span class="p">,</span> <span class="n">reviewLink</span><span class="p">);</span>
+
+    <span class="o">//</span><span class="n">add</span> <span class="n">video</span> <span class="n">privacy</span> <span class="n">domain</span>
+    <span class="n">vimeo</span><span class="o">.</span><span class="n">addVideoPrivacyDomain</span><span class="p">(</span><span class="n">videoEndPoint</span><span class="p">,</span> <span class="s">"clickntap.com"</span><span class="p">);</span>
+
+    <span class="o">//</span><span class="n">delete</span> <span class="n">video</span>
+    <span class="n">vimeo</span><span class="o">.</span><span class="n">removeVideo</span><span class="p">(</span><span class="n">videoEndPoint</span><span class="p">);</span>
+
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+
+</pre></div>
+
+<p>The class VideoResponse provides response code and json response, see Vimeo API documentation to check errors.</p>
+
 <h3>
 <a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
 
