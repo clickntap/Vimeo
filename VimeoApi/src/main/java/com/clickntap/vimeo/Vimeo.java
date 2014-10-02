@@ -96,6 +96,18 @@ public class Vimeo {
 			throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
 	}
 
+	public VimeoResponse likesVideo(String videoId) throws Exception {
+		return apiRequest(new StringBuffer("/me/likes/").append(videoId).toString(), HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse likeVideo(String videoId) throws Exception {
+		return apiRequest(new StringBuffer("/me/likes/").append(videoId).toString(), HttpPut.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse unlikeVideo(String videoId) throws Exception {
+		return apiRequest(new StringBuffer("/me/likes/").append(videoId).toString(), HttpDelete.METHOD_NAME, null, null);
+	}
+
 	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
@@ -146,7 +158,7 @@ public class Vimeo {
 				out.put(header.getName(), header.getValue());
 			}
 			responseAsString = out.toString();
-		} else {
+		} else if (statusCode != 204) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			response.getEntity().writeTo(out);
 			responseAsString = out.toString("UTF-8");
