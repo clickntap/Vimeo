@@ -18,7 +18,10 @@ public class VimeoSample {
     Vimeo vimeo = new Vimeo("[token]"); 
     
     //add a video
-    String videoEndPoint = vimeo.addVideo(new File("/Users/tmendici/Downloads/Video.AVI"), true);
+    
+    boolean upgradeTo1080 = true;
+    
+    String videoEndPoint = vimeo.addVideo(new File("/Users/tmendici/Downloads/Video.AVI"), upgradeTo1080);
     
     //edit video
     String name = "Name";
