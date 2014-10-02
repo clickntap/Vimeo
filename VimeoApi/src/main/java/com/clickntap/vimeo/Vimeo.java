@@ -2,6 +2,7 @@ package com.clickntap.vimeo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -30,8 +32,31 @@ public class Vimeo {
 		this.bearerToken = bearerToken;
 	}
 
-	public VimeoResponse getVideoInfo(String endpoint) throws Exception {
-		return apiRequest(endpoint, HttpGet.METHOD_NAME, null, null);
+	public VimeoResponse getVideoInfo(String videoEndpoint) throws Exception {
+		return apiRequest(videoEndpoint, HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse updateVideoMetadata(String videoEndpoint, String name, String description, String license, String privacyView, String privacyEmbed, boolean reviewLink) throws Exception {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("name", name);
+		params.put("description", description);
+		params.put("license", license);
+		params.put("privacy.view", privacyView);
+		params.put("privacy.embed", privacyEmbed);
+		params.put("review_link", reviewLink ? "true" : "false");
+		return apiRequest(videoEndpoint, HttpPatch.METHOD_NAME, params, null);
+	}
+
+	public VimeoResponse addVideoPrivacyDomain(String videoEndpoint, String domain) throws Exception {
+		return apiRequest(new StringBuffer(videoEndpoint).append("/privacy/domains/").append(URLEncoder.encode(domain, "UTF-8")).toString(), HttpPut.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse getVideoPrivacyDomains(String videoEndpoint) throws Exception {
+		return apiRequest(new StringBuffer(videoEndpoint).append("/privacy/domains").toString(), HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse removeVideo(String videoEndpoint) throws Exception {
+		return apiRequest(videoEndpoint, HttpDelete.METHOD_NAME, null, null);
 	}
 
 	public VimeoResponse getVideos() throws Exception {
@@ -83,6 +108,8 @@ public class Vimeo {
 			request = new HttpPut(url);
 		} else if (methodName.equals(HttpDelete.METHOD_NAME)) {
 			request = new HttpDelete(url);
+		} else if (methodName.equals(HttpPatch.METHOD_NAME)) {
+			request = new HttpPatch(url);
 		}
 		request.addHeader("Accept", "application/vnd.vimeo.*+json; version=3.2");
 		request.addHeader("Authorization", new StringBuffer("bearer ").append(bearerToken).toString());
@@ -92,13 +119,20 @@ public class Vimeo {
 				postParameters.add(new BasicNameValuePair(key, params.get(key)));
 			}
 			((HttpPost) request).setEntity(new UrlEncodedFormEntity(postParameters));
+		} else if (params != null && request instanceof HttpPatch) {
+			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+			for (String key : params.keySet()) {
+				postParameters.add(new BasicNameValuePair(key, params.get(key)));
+			}
+			((HttpPatch) request).setEntity(new UrlEncodedFormEntity(postParameters));
 		} else if (file != null && request instanceof HttpPut) {
 			FileEntity fileEntity = new FileEntity(file, ContentType.MULTIPART_FORM_DATA);
 			((HttpPut) request).setEntity(fileEntity);
 		}
 		CloseableHttpResponse response = client.execute(request);
 		String responseAsString = null;
-		if (methodName.equals(HttpDelete.METHOD_NAME)) {
+		int statusCode = response.getStatusLine().getStatusCode();
+		if (methodName.equals(HttpPut.METHOD_NAME) || methodName.equals(HttpDelete.METHOD_NAME)) {
 			JSONObject out = new JSONObject();
 			for (Header header : response.getAllHeaders()) {
 				out.put(header.getName(), header.getValue());
@@ -116,7 +150,7 @@ public class Vimeo {
 		} catch (Exception e) {
 			json = new JSONObject();
 		}
-		VimeoResponse vimeoResponse = new VimeoResponse(json, response.getStatusLine().getStatusCode());
+		VimeoResponse vimeoResponse = new VimeoResponse(json, statusCode);
 		response.close();
 		client.close();
 		return vimeoResponse;

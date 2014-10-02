@@ -19,4 +19,7 @@ public class VimeoResponse {
 		return statusCode;
 	}
 
+	public String toString() {
+		return new StringBuffer("HTTP Status Code: \n").append(getStatusCode()).append("\nJson: \n").append(getJson().toString(2)).toString();
+	}
 }
