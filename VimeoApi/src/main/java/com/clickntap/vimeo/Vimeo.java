@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -113,21 +114,24 @@ public class Vimeo {
 		}
 		request.addHeader("Accept", "application/vnd.vimeo.*+json; version=3.2");
 		request.addHeader("Authorization", new StringBuffer("bearer ").append(bearerToken).toString());
-		if (params != null && request instanceof HttpPost) {
+		HttpEntity entity = null;
+		if (params != null) {
 			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 			for (String key : params.keySet()) {
 				postParameters.add(new BasicNameValuePair(key, params.get(key)));
 			}
-			((HttpPost) request).setEntity(new UrlEncodedFormEntity(postParameters));
-		} else if (params != null && request instanceof HttpPatch) {
-			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-			for (String key : params.keySet()) {
-				postParameters.add(new BasicNameValuePair(key, params.get(key)));
+			entity = new UrlEncodedFormEntity(postParameters);
+		} else if (file != null) {
+			entity = new FileEntity(file, ContentType.MULTIPART_FORM_DATA);
+		}
+		if (entity != null) {
+			if (request instanceof HttpPost) {
+				((HttpPost) request).setEntity(entity);
+			} else if (request instanceof HttpPatch) {
+				((HttpPatch) request).setEntity(entity);
+			} else if (request instanceof HttpPut) {
+				((HttpPut) request).setEntity(entity);
 			}
-			((HttpPatch) request).setEntity(new UrlEncodedFormEntity(postParameters));
-		} else if (file != null && request instanceof HttpPut) {
-			FileEntity fileEntity = new FileEntity(file, ContentType.MULTIPART_FORM_DATA);
-			((HttpPut) request).setEntity(fileEntity);
 		}
 		CloseableHttpResponse response = client.execute(request);
 		String responseAsString = null;
