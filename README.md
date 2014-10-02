@@ -28,7 +28,7 @@ public class VimeoSample {
     //edit video
     String name = "Name";
     String desc = "Description";
-    String license = "" //see Vimeo API Documentation
+    String license = ""; //see Vimeo API Documentation
     String privacyView = "nobody"; //see Vimeo API Documentation
     String privacyEmbed = "whitelist"; //see Vimeo API Documentation
     boolean reviewLink = false;
