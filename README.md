@@ -14,14 +14,16 @@ import java.io.File;
 
 public class VimeoSample {
 
-	public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception {
     Vimeo vimeo = new Vimeo("[token]"); 
     
     //add a video
-    
     boolean upgradeTo1080 = true;
-    
     String videoEndPoint = vimeo.addVideo(new File("/Users/tmendici/Downloads/Video.AVI"), upgradeTo1080);
+    
+    //get video info
+    VimeoResponse info = vimeo.getVideoInfo(videoEndPoint);
+    System.out.println(info);
     
     //edit video
     String name = "Name";
