@@ -30,23 +30,23 @@ public class Vimeo {
 		this.bearerToken = bearerToken;
 	}
 
-	public JSONObject getVideoInfo(String endpoint) throws Exception {
+	public VimeoResponse getVideoInfo(String endpoint) throws Exception {
 		return apiRequest(endpoint, HttpGet.METHOD_NAME, null, null);
 	}
 
-	public JSONObject getVideos() throws Exception {
+	public VimeoResponse getVideos() throws Exception {
 		return apiRequest("/me/videos", HttpGet.METHOD_NAME, null, null);
 	}
 
-	public JSONObject beginUploadVideo(Map<String, String> params) throws Exception {
+	public VimeoResponse beginUploadVideo(Map<String, String> params) throws Exception {
 		return apiRequest("/me/videos", HttpPost.METHOD_NAME, params, null);
 	}
 
-	public JSONObject uploadVideo(File file, String uploadLinkSecure) throws Exception {
+	public VimeoResponse uploadVideo(File file, String uploadLinkSecure) throws Exception {
 		return apiRequest(uploadLinkSecure, HttpPut.METHOD_NAME, null, file);
 	}
 
-	public JSONObject endUploadVideo(String completeUri) throws Exception {
+	public VimeoResponse endUploadVideo(String completeUri) throws Exception {
 		return apiRequest(completeUri, HttpDelete.METHOD_NAME, null, null);
 	}
 
@@ -55,13 +55,18 @@ public class Vimeo {
 		params.put("type", "streaming");
 		params.put("redirect_url", "");
 		params.put("upgrade_to_1080", upgradeTo1080 ? "true" : "false");
-		JSONObject info = beginUploadVideo(params);
-		uploadVideo(file, info.getString("upload_link_secure"));
-		info = endUploadVideo(info.getString("complete_uri"));
-		return info.getString("Location");
+		VimeoResponse response = beginUploadVideo(params);
+		if (response.getStatusCode() == 201) {
+			uploadVideo(file, response.getJson().getString("upload_link_secure"));
+			response = endUploadVideo(response.getJson().getString("complete_uri"));
+			if (response.getStatusCode() == 201) {
+				return response.getJson().getString("Location");
+			}
+		}
+		throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
 	}
 
-	private JSONObject apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
+	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
 		String url = null;
@@ -92,25 +97,28 @@ public class Vimeo {
 			((HttpPut) request).setEntity(fileEntity);
 		}
 		CloseableHttpResponse response = client.execute(request);
-		String json = null;
+		String responseAsString = null;
 		if (methodName.equals(HttpDelete.METHOD_NAME)) {
 			JSONObject out = new JSONObject();
 			for (Header header : response.getAllHeaders()) {
 				out.put(header.getName(), header.getValue());
 			}
-			json = out.toString();
+			responseAsString = out.toString();
 		} else {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			response.getEntity().writeTo(out);
-			json = out.toString("UTF-8");
+			responseAsString = out.toString("UTF-8");
 			out.close();
 		}
+		JSONObject json = null;
+		try {
+			json = new JSONObject(responseAsString);
+		} catch (Exception e) {
+			json = new JSONObject();
+		}
+		VimeoResponse vimeoResponse = new VimeoResponse(json, response.getStatusLine().getStatusCode());
 		response.close();
 		client.close();
-		try {
-			return new JSONObject(json);
-		} catch (Exception e) {
-			return new JSONObject();
-		}
+		return vimeoResponse;
 	}
 }
