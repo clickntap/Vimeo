@@ -47,6 +47,7 @@ public class VimeoSample {
 
 ```
 
+The class VideoResponse provides response code and json response, see Vimeo API documentation to check errors.
 
 ### Support or Contact
 Having trouble with Java Vimeo API 3.0? Contact info@clickntap.com and we’ll help you sort it out.
