@@ -108,6 +108,18 @@ public class Vimeo {
 		return apiRequest(new StringBuffer("/me/likes/").append(videoId).toString(), HttpDelete.METHOD_NAME, null, null);
 	}
 
+	public VimeoResponse checkEmbedPreset(String videoEndPoint, String presetId) throws Exception {
+		return apiRequest(new StringBuffer(videoEndPoint).append("/presets/").append(presetId).toString(), HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse addEmbedPreset(String videoEndPoint, String presetId) throws Exception {
+		return apiRequest(new StringBuffer(videoEndPoint).append("/presets/").append(presetId).toString(), HttpPut.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse removeEmbedPreset(String videoEndPoint, String presetId) throws Exception {
+		return apiRequest(new StringBuffer(videoEndPoint).append("/presets/").append(presetId).toString(), HttpDelete.METHOD_NAME, null, null);
+	}
+
 	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
