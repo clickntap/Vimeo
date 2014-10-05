@@ -27,10 +27,16 @@ import org.json.JSONObject;
 
 public class Vimeo {
 	private static final String VIMEO_SERVER = "https://api.vimeo.com";
-	private String bearerToken;
+	private String token;
+	private String tokenType;
 
-	public Vimeo(String bearerToken) {
-		this.bearerToken = bearerToken;
+	public Vimeo(String token) {
+		this(token, "bearer");
+	}
+
+	public Vimeo(String token, String tokenType) {
+		this.token = token;
+		this.tokenType = tokenType;
 	}
 
 	public VimeoResponse getVideoInfo(String videoEndpoint) throws Exception {
@@ -141,7 +147,7 @@ public class Vimeo {
 			request = new HttpPatch(url);
 		}
 		request.addHeader("Accept", "application/vnd.vimeo.*+json; version=3.2");
-		request.addHeader("Authorization", new StringBuffer("bearer ").append(bearerToken).toString());
+		request.addHeader("Authorization", new StringBuffer(tokenType).append(" ").append(token).toString());
 		HttpEntity entity = null;
 		if (params != null) {
 			ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
