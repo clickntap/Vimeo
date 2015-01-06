@@ -70,6 +70,15 @@ public class Vimeo {
 		return apiRequest("/me/videos", HttpGet.METHOD_NAME, null, null);
 	}
 
+	public VimeoResponse searchVideos(String query) throws Exception {
+		return apiRequest("/me/videos?query="+query, HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse searchVideos(String query, String pageNumber, String itemsPerPage) throws Exception {
+		String apiRequestEndpoint = "/me/videos?page=" + pageNumber + "&per_page=" + itemsPerPage + "&query=" + query;
+		return apiRequest(apiRequestEndpoint, HttpGet.METHOD_NAME, null, null);
+	}
+
 	public VimeoResponse beginUploadVideo(Map<String, String> params) throws Exception {
 		return apiRequest("/me/videos", HttpPost.METHOD_NAME, params, null);
 	}
@@ -126,7 +135,57 @@ public class Vimeo {
 		return apiRequest(new StringBuffer(videoEndPoint).append("/presets/").append(presetId).toString(), HttpDelete.METHOD_NAME, null, null);
 	}
 
-	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
+	public VimeoResponse getTextTracks(String videoEndPoint) throws Exception {
+		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks").toString(), HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse getTextTrack(String videoEndPoint, String textTrackId) throws Exception {
+		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpGet.METHOD_NAME, null, null);
+	}
+
+	public String addTextTrack(String videoEndPoint, File file, boolean active, String type, String language, String name) throws Exception {
+
+		String textTrackEndPoint = null;
+		VimeoResponse response = null;
+
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("active", active ? "true" : "false");
+		params.put("type", type);
+		params.put("language", language);
+		params.put("name", name);
+
+		VimeoResponse addVideoRespose = apiRequest(new StringBuffer(videoEndPoint).append("/texttracks").toString(), HttpPost.METHOD_NAME, params, null);
+
+		if (addVideoRespose.getStatusCode() == 201){
+			String textTrackUploadLink = addVideoRespose.getJson().getString("link");
+			response = apiRequest(textTrackUploadLink, HttpPut.METHOD_NAME, null, file);
+			if (response.getStatusCode() == 200) {
+				textTrackEndPoint = addVideoRespose.getJson().getString("uri");
+			}
+		}
+		if (textTrackEndPoint != null) {
+			return textTrackEndPoint;
+		} else {
+			throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
+		}
+
+
+	}
+
+	public VimeoResponse updateTextTrack(String videoEndPoint, String textTrackUri, boolean active, String type, String language, String name) throws Exception {
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("active", active ? "true" : "false");
+		params.put("type", type);
+		params.put("language", language);
+		params.put("name", name);
+		return apiRequest(new StringBuffer(videoEndPoint).append(textTrackUri).toString(), HttpPatch.METHOD_NAME, params, null);
+	}
+
+	public VimeoResponse removeTextTrack(String videoEndPoint, String textTrackId) throws Exception {
+		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpDelete.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
 		String url = null;
