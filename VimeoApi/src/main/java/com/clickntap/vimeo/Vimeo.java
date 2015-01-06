@@ -185,7 +185,7 @@ public class Vimeo {
 		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpDelete.METHOD_NAME, null, null);
 	}
 
-	public VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
+	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws Exception {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
 		String url = null;
