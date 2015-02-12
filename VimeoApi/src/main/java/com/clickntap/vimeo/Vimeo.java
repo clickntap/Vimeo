@@ -78,6 +78,26 @@ public class Vimeo {
 		String apiRequestEndpoint = "/me/videos?page=" + pageNumber + "&per_page=" + itemsPerPage + "&query=" + query;
 		return apiRequest(apiRequestEndpoint, HttpGet.METHOD_NAME, null, null);
 	}
+    
+    public VimeoResponse searchPublicVideos(String query) throws Exception{
+		String apiRequestEndpoint = "/videos?query=" + query;
+		return apiRequest(apiRequestEndpoint, HttpGet.METHOD_NAME, null, null);
+    }
+    
+    public VimeoResponse searchPublicVideos(String query, String pageNumber, String itemsPerPage) throws Exception{
+		String apiRequestEndpoint = "/videos?page=" + pageNumber + "&per_page=" + itemsPerPage + "&query=" + query;
+		return apiRequest(apiRequestEndpoint, HttpGet.METHOD_NAME, null, null);
+    }
+    
+    public VimeoResponse searchPublicVideos(String query, String pageNumber, String itemsPerPage, String sort, String direction) throws Exception{
+		String apiRequestEndpoint = "/videos?page=" + pageNumber + "&per_page=" + itemsPerPage + "&query=" + query + "&sort=" + sort + "&direction=" + direction;
+		return apiRequest(apiRequestEndpoint, HttpGet.METHOD_NAME, null, null);
+    }
+    
+    public VimeoResponse searchPublicVideos(String query, String pageNumber, String itemsPerPage, String sort, String direction, String filter) throws Exception{
+		String apiRequestEndpoint = "/videos?page=" + pageNumber + "&per_page=" + itemsPerPage + "&query=" + query + "&sort=" + sort + "&direction=" + direction + "&filter=" + filter;
+		return apiRequest(apiRequestEndpoint, HttpGet.METHOD_NAME, null, null);
+    }
 
 	public VimeoResponse beginUploadVideo(Map<String, String> params) throws Exception {
 		return apiRequest("/me/videos", HttpPost.METHOD_NAME, params, null);
