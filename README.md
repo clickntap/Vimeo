@@ -6,7 +6,7 @@ https://developer.vimeo.com/apps
 Then you'll need to generate an Access Token with upload access.
 The generated Token is all you need to use the Java Vimeo API 3.0.
 
-```python
+```java
 
 package com.clickntap.vimeo;
 
@@ -29,7 +29,7 @@ public class VimeoSample {
     String name = "Name";
     String desc = "Description";
     String license = ""; //see Vimeo API Documentation
-    String privacyView = "nobody"; //see Vimeo API Documentation
+    String privacyView = "disable"; //see Vimeo API Documentation
     String privacyEmbed = "whitelist"; //see Vimeo API Documentation
     boolean reviewLink = false;
     vimeo.updateVideoMetadata(videoEndPoint, name, desc, license, privacyView, privacyEmbed, reviewLink);
