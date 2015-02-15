@@ -6,8 +6,13 @@
     <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>vimeo</name>
-    <url>http://maven.apache.org</url>
+	<groupId>com.clickntap</groupId>
+	<artifactId>Stripecube</artifactId>
+	<version>1.26-SNAPSHOT</version>
+
+	<name>Vimeo</name>
+	<description>Vimeo Java API</description>
+	<url>https://github.com/clickntap/Stripecube</url>
 
 
     <prerequisites>
