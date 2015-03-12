@@ -91,18 +91,14 @@ public class Vimeo {
         params.put("redirect_url", "");
         params.put("upgrade_to_1080", upgradeTo1080 ? "true" : "false");
         VimeoResponse response = beginUploadVideo(params);
-        String videoEndpoint = null;
         if (response.getStatusCode() == 201) {
             uploadVideo(file, response.getJson().getString("upload_link_secure"));
             response = endUploadVideo(response.getJson().getString("complete_uri"));
             if (response.getStatusCode() == 201) {
-                videoEndpoint = response.getJson().getString("Location");
+                return response.getJson().getString("Location");
             }
         }
-        if (videoEndpoint != null) {
-            return videoEndpoint;
-        } else
-            throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
+		throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
     }
 
     public VimeoResponse likesVideo(String videoId) throws Exception {
@@ -139,7 +135,6 @@ public class Vimeo {
 
     public String addTextTrack(String videoEndPoint, File file, boolean active, String type, String language, String name) throws Exception {
 
-        String textTrackEndPoint = null;
         VimeoResponse response = null;
 
         Map<String, String> params = new HashMap<String, String>();
@@ -154,15 +149,10 @@ public class Vimeo {
             String textTrackUploadLink = addVideoRespose.getJson().getString("link");
             response = apiRequest(textTrackUploadLink, HttpPut.METHOD_NAME, null, file);
             if (response.getStatusCode() == 200) {
-                textTrackEndPoint = addVideoRespose.getJson().getString("uri");
+                return addVideoRespose.getJson().getString("uri");
             }
         }
-        if (textTrackEndPoint != null) {
-            return textTrackEndPoint;
-        } else {
-            throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
-        }
-
+        throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
 
     }
 
