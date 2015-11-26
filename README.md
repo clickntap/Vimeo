@@ -55,7 +55,7 @@ The class VideoResponse provides response code and json response, see Vimeo API 
 
 <dependency>
   <groupId>com.clickntap</groupId>
-  <artifactId>Vimeo</artifactId>
+  <artifactId>vimeo</artifactId>
   <version>1.4</version>
 </dependency>
 
