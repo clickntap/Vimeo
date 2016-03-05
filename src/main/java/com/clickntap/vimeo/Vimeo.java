@@ -69,6 +69,10 @@ public class Vimeo {
         return apiRequest(videoEndpoint, HttpDelete.METHOD_NAME, null, null);
     }
 
+    public VimeoResponse getMe() throws IOException {
+        return apiRequest("/me", HttpGet.METHOD_NAME, null, null);
+    }
+
     public VimeoResponse getVideos() throws IOException {
         return apiRequest("/me/videos", HttpGet.METHOD_NAME, null, null);
     }
