@@ -1,4 +1,4 @@
-### Welcome to Java Vimeo API 3.0.
+### Welcome to Java Vimeo API 3.x.
 To use this api you’ll first need to register your app from Vimeo:
 
 https://developer.vimeo.com/apps
