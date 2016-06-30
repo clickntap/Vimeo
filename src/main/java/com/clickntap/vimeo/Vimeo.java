@@ -2,7 +2,9 @@ package com.clickntap.vimeo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -91,27 +93,34 @@ public class Vimeo {
     }
 
     public VimeoResponse uploadVideo(File file, String uploadLinkSecure) throws IOException {
-        return apiRequest(uploadLinkSecure, HttpPut.METHOD_NAME, null, file);
+        return uploadVideo(new FileInputStream(file), uploadLinkSecure);
+    }
+    public VimeoResponse uploadVideo(InputStream inputStream, String uploadLinkSecure) throws IOException {
+        return apiRequest(uploadLinkSecure, HttpPut.METHOD_NAME, null, inputStream);
     }
 
     public VimeoResponse endUploadVideo(String completeUri) throws IOException {
         return apiRequest(completeUri, HttpDelete.METHOD_NAME, null, null);
     }
-
-    public String addVideo(File file, boolean upgradeTo1080) throws IOException, VimeoException {
-        Map<String, String> params = new HashMap<String, String>();
+    
+    public String addVideo(InputStream inputStream, boolean upgradeTo1080) throws IOException, VimeoException {
+    	Map<String, String> params = new HashMap<String, String>();
         params.put("type", "streaming");
         params.put("redirect_url", "");
         params.put("upgrade_to_1080", upgradeTo1080 ? "true" : "false");
         VimeoResponse response = beginUploadVideo(params);
         if (response.getStatusCode() == 201) {
-            uploadVideo(file, response.getJson().getString("upload_link_secure"));
+            uploadVideo(inputStream, response.getJson().getString("upload_link_secure"));
             response = endUploadVideo(response.getJson().getString("complete_uri"));
             if (response.getStatusCode() == 201) {
                 return response.getJson().getString("Location");
             }
         }
 		throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
+    }
+    
+    public String addVideo(File file, boolean upgradeTo1080) throws IOException, VimeoException {
+        return addVideo(new FileInputStream(file), upgradeTo1080);
     }
 
     public VimeoResponse likesVideo(String videoId) throws IOException {
@@ -145,9 +154,7 @@ public class Vimeo {
     public VimeoResponse getTextTrack(String videoEndPoint, String textTrackId) throws IOException {
         return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpGet.METHOD_NAME, null, null);
     }
-
-    public String addTextTrack(String videoEndPoint, File file, boolean active, String type, String language, String name) throws IOException, VimeoException {
-
+    public String addTextTrack(String videoEndPoint, InputStream inputStream, boolean active, String type, String language, String name) throws IOException, VimeoException {
         VimeoResponse response = null;
 
         Map<String, String> params = new HashMap<String, String>();
@@ -160,13 +167,16 @@ public class Vimeo {
 
         if (addVideoRespose.getStatusCode() == 201) {
             String textTrackUploadLink = addVideoRespose.getJson().getString("link");
-            response = apiRequest(textTrackUploadLink, HttpPut.METHOD_NAME, null, file);
+            response = apiRequest(textTrackUploadLink, HttpPut.METHOD_NAME, null, inputStream);
             if (response.getStatusCode() == 200) {
                 return addVideoRespose.getJson().getString("uri");
             }
         }
         throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
+    }
 
+    public String addTextTrack(String videoEndPoint, File file, boolean active, String type, String language, String name) throws IOException, VimeoException {
+    	return addTextTrack(videoEndPoint, new FileInputStream(file), active, type, language, name);
     }
 
     public VimeoResponse updateTextTrack(String videoEndPoint, String textTrackUri, boolean active, String type, String language, String name) throws IOException {
@@ -182,7 +192,7 @@ public class Vimeo {
         return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpDelete.METHOD_NAME, null, null);
     }
 
-    private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws IOException {
+    private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, InputStream inputStream) throws IOException {
         CloseableHttpClient client = HttpClientBuilder.create().build();
         HttpRequestBase request = null;
         String url = null;
@@ -211,12 +221,12 @@ public class Vimeo {
                 postParameters.add(new BasicNameValuePair(key, params.get(key)));
             }
             entity = new UrlEncodedFormEntity(postParameters);
-        } else if (file != null) {
-            entity = new FileEntity(file, ContentType.MULTIPART_FORM_DATA);
+        } else if (inputStream != null) {
+            entity = new InputStreamEntity(inputStream, ContentType.MULTIPART_FORM_DATA);
         }
         if (entity != null) {
             if (request instanceof HttpPost) {
-                ((HttpPost) request).setEntity(entity);
+            	((HttpPost) request).setEntity(entity);
             } else if (request instanceof HttpPatch) {
                 ((HttpPatch) request).setEntity(entity);
             } else if (request instanceof HttpPut) {
