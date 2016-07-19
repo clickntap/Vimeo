@@ -4,7 +4,7 @@ To use this api you’ll first need to register your app from Vimeo:
 https://developer.vimeo.com/apps
 
 Then you'll need to generate an Access Token with upload access.
-The generated Token is all you need to use the Java Vimeo API 3.0.
+The generated Token is all you need to use the Java Vimeo API 3.x.
 
 ```java
 
@@ -62,4 +62,4 @@ The class VideoResponse provides response code and json response, see Vimeo API 
 ```
 
 ### Support or Contact
-Having trouble with Java Vimeo API 3.0? Contact info@clickntap.com and we’ll help you sort it out.
+Having trouble with Java Vimeo API 3.x? Contact info@clickntap.com and we’ll help you sort it out.
