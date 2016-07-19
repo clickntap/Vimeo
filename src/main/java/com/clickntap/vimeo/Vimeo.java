@@ -48,14 +48,14 @@ public class Vimeo {
         return apiRequest(videoEndpoint, HttpGet.METHOD_NAME, null, null);
     }
 
-    public VimeoResponse updateVideoMetadata(String videoEndpoint, String name, String description, String license, String privacyView, String privacyEmbed, boolean reviewLink) throws IOException {
+    public VimeoResponse updateVideoMetadata(String videoEndpoint, String name, String description, String license, String privacyView, String privacyEmbed, Boolean reviewLink) throws IOException {
         Map<String, String> params = new HashMap<String, String>();
-        params.put("name", name);
-        params.put("description", description);
-        params.put("license", license);
-        params.put("privacy.view", privacyView);
-        params.put("privacy.embed", privacyEmbed);
-        params.put("review_link", reviewLink ? "true" : "false");
+        if ( name != null ) params.put("name", name);
+        if ( description != null ) params.put("description", description);
+        if ( license != null ) params.put("license", license);
+        if ( privacyView != null ) params.put("privacy.view", privacyView);
+        if ( privacyEmbed != null ) params.put("privacy.embed", privacyEmbed);
+        if ( reviewLink != null ) params.put("review_link", reviewLink ? "true" : "false");
         return apiRequest(videoEndpoint, HttpPatch.METHOD_NAME, params, null);
     }
 
@@ -73,6 +73,10 @@ public class Vimeo {
 
     public VimeoResponse getMe() throws IOException {
         return apiRequest("/me", HttpGet.METHOD_NAME, null, null);
+    }
+
+    public VimeoResponse getOauthVerify() throws IOException {
+        return apiRequest("/oauth/verify", HttpGet.METHOD_NAME, null, null);
     }
 
     public VimeoResponse getVideos() throws IOException {
