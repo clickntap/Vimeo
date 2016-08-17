@@ -24,6 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -102,26 +103,22 @@ public class Vimeo {
 		return apiRequest("/videos", HttpPost.METHOD_NAME, params, null);
 	}
 
-	public VimeoResponse uploadVideo(File file, String uploadLinkSecure) throws IOException {
-		return uploadVideo(new FileInputStream(file), uploadLinkSecure);
-	}
-
-	public VimeoResponse uploadVideo(InputStream inputStream, String uploadLinkSecure) throws IOException {
-		return apiRequest(uploadLinkSecure, HttpPut.METHOD_NAME, null, inputStream);
+	public VimeoResponse uploadVideo(Object input, String uploadLinkSecure) throws IOException {
+		return apiRequest(uploadLinkSecure, HttpPut.METHOD_NAME, null, input);
 	}
 
 	public VimeoResponse endUploadVideo(String completeUri) throws IOException {
 		return apiRequest(completeUri, HttpDelete.METHOD_NAME, null, null);
 	}
 
-	public String addVideo(InputStream inputStream, boolean upgradeTo1080) throws IOException, VimeoException {
+	public String addVideo(Object input, boolean upgradeTo1080) throws IOException, VimeoException {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("type", "streaming");
 		params.put("redirect_url", "");
 		params.put("upgrade_to_1080", upgradeTo1080 ? "true" : "false");
 		VimeoResponse response = beginUploadVideo(params);
 		if (response.getStatusCode() == 201) {
-			uploadVideo(inputStream, response.getJson().getString("upload_link_secure"));
+			uploadVideo(input, response.getJson().getString("upload_link_secure"));
 			response = endUploadVideo(response.getJson().getString("complete_uri"));
 			if (response.getStatusCode() == 201) {
 				return response.getJson().getString("Location");
@@ -204,7 +201,7 @@ public class Vimeo {
 		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpDelete.METHOD_NAME, null, null);
 	}
 
-	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, InputStream inputStream) throws IOException {
+	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, Object input) throws IOException {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
 		String url = null;
@@ -233,8 +230,13 @@ public class Vimeo {
 				postParameters.add(new BasicNameValuePair(key, params.get(key)));
 			}
 			entity = new UrlEncodedFormEntity(postParameters);
-		} else if (inputStream != null) {
-			entity = new InputStreamEntity(inputStream, ContentType.MULTIPART_FORM_DATA);
+		} else if (input != null) {
+			if (input instanceof File) {
+				entity = new FileEntity((File) input, ContentType.MULTIPART_FORM_DATA);
+			}
+			if (input instanceof InputStream) {
+				entity = new InputStreamEntity((InputStream) input, ContentType.DEFAULT_BINARY);
+			}
 		}
 		if (entity != null) {
 			if (request instanceof HttpPost) {
