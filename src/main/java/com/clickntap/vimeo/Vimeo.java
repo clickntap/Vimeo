@@ -42,8 +42,40 @@ public class Vimeo {
 		this.tokenType = tokenType;
 	}
 
-	public VimeoResponse getVideoInfo(String videoEndpoint) throws IOException {
-		return apiRequest(videoEndpoint, HttpGet.METHOD_NAME, null, null);
+	public VimeoResponse getVideoInfo(String endpoint) throws IOException {
+		return apiRequest(endpoint, HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse get(String endpoint) throws IOException {
+		return apiRequest(endpoint, HttpGet.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse get(String endpoint, Map<String, String> params) throws IOException {
+		return apiRequest(endpoint, HttpGet.METHOD_NAME, params, null);
+	}
+
+	public VimeoResponse put(String endpoint) throws IOException {
+		return apiRequest(endpoint, HttpPut.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse put(String endpoint, Map<String, String> params) throws IOException {
+		return apiRequest(endpoint, HttpPut.METHOD_NAME, params, null);
+	}
+
+	public VimeoResponse delete(String endpoint) throws IOException {
+		return apiRequest(endpoint, HttpDelete.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse delete(String endpoint, Map<String, String> params) throws IOException {
+		return apiRequest(endpoint, HttpDelete.METHOD_NAME, params, null);
+	}
+
+	public VimeoResponse patch(String endpoint) throws IOException {
+		return apiRequest(endpoint, HttpPatch.METHOD_NAME, null, null);
+	}
+
+	public VimeoResponse patch(String endpoint, Map<String, String> params) throws IOException {
+		return apiRequest(endpoint, HttpPatch.METHOD_NAME, params, null);
 	}
 
 	public VimeoResponse updateVideoMetadata(String videoEndpoint, String name, String description, String license, String privacyView, String privacyEmbed, boolean reviewLink) throws IOException {
@@ -182,7 +214,7 @@ public class Vimeo {
 		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpDelete.METHOD_NAME, null, null);
 	}
 
-	private VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws IOException {
+	protected VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws IOException {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpRequestBase request = null;
 		String url = null;
