@@ -128,7 +128,11 @@ public class Vimeo {
 	}
 
 	public String addVideo(File file, boolean upgradeTo1080) throws IOException, VimeoException {
-		return addVideo(new FileInputStream(file), upgradeTo1080);
+		return addVideo(file, upgradeTo1080);
+	}
+
+	public String addVideo(InputStream input, boolean upgradeTo1080) throws IOException, VimeoException {
+		return addVideo(input, upgradeTo1080);
 	}
 
 	public VimeoResponse likesVideo(String videoId) throws IOException {
