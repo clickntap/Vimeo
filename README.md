@@ -58,8 +58,23 @@ The class VideoResponse provides response code and json response, see Vimeo API 
   <artifactId>vimeo</artifactId>
   <version>1.10</version>
 </dependency>
-
+ 
 ```
+
+### Use with Gradle on Android
+Be sure to not call network related methods on the main-thread.
+```
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  compile 'com.clickntap:vimeo:1.4'
+  // as the default Android HttpClient is outdatet add this too (https://hc.apache.org/httpcomponents-client-4.3.x/android-port.html) 
+  compile group: 'org.apache.httpcomponents', name: 'httpclient-android', version: '4.3.5.1'
+}
+```    
+
 
 ### Support or Contact
 Having trouble with Java Vimeo API 3.x? Contact info@clickntap.com and we’ll help you sort it out.
