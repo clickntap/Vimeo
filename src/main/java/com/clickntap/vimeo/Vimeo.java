@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,10 @@ import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -32,6 +35,7 @@ public class Vimeo {
 	private static final String VIMEO_SERVER = "https://api.vimeo.com";
 	private String token;
 	private String tokenType;
+	private URL proxy;
 
 	public Vimeo(String token) {
 		this(token, "bearer");
@@ -213,6 +217,14 @@ public class Vimeo {
 	public VimeoResponse removeTextTrack(String videoEndPoint, String textTrackId) throws IOException {
 		return apiRequest(new StringBuffer(videoEndPoint).append("/texttracks/").append(textTrackId).toString(), HttpDelete.METHOD_NAME, null, null);
 	}
+	
+	public URL getProxy() {
+		return proxy;
+	}
+
+	public void setProxy(URL proxy) {
+		this.proxy = proxy;
+	}
 
 	protected VimeoResponse apiRequest(String endpoint, String methodName, Map<String, String> params, File file) throws IOException {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
@@ -255,6 +267,16 @@ public class Vimeo {
 				((HttpPut) request).setEntity(entity);
 			}
 		}
+		
+		//Applying proxy to the request
+		if(proxy != null){
+			HttpHost httpProxy = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getProtocol());
+			RequestConfig config = RequestConfig.custom()
+	                .setProxy(httpProxy)
+	                .build();
+			request.setConfig(config);
+		}
+		
 		CloseableHttpResponse response = client.execute(request);
 		String responseAsString = null;
 		int statusCode = response.getStatusLine().getStatusCode();
