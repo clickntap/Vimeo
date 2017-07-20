@@ -3,6 +3,7 @@ package com.clickntap.vimeo;
 import org.json.JSONObject;
 
 public class VimeoResponse {
+
 	private JSONObject json;
 	private JSONObject headers;
 	private int statusCode;
@@ -27,6 +28,10 @@ public class VimeoResponse {
 
 	public int getRateLimitRemaining() {
 		return getHeaders().getInt("X-RateLimit-Remaining");
+	}
+
+	public String getRateLimitReset() {
+		return getHeaders().getString("X-RateLimit-Reset");
 	}
 
 	public int getStatusCode() {
