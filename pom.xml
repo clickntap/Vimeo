@@ -3,7 +3,7 @@
 
 	<groupId>com.clickntap</groupId>
 	<artifactId>vimeo</artifactId>
-	<version>1.11-SNAPSHOT</version>
+	<version>1.11</version>
 	<packaging>jar</packaging>
 
 	<name>Vimeo</name>
@@ -63,7 +63,7 @@
 		<connection>scm:git:ssh://github.com/clickntap/Vimeo.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/clickntap/Vimeo.git</developerConnection>
 		<url>https://github.com/clickntap/Vimeo</url>
-		<tag>HEAD</tag>
+		<tag>vimeo-1.11</tag>
 	</scm>
 
 	<dependencies>
