@@ -288,8 +288,9 @@ public class Vimeo {
     } else if (methodName.equals(HttpPatch.METHOD_NAME)) {
       request = new HttpPatch(url);
     }
-    request.addHeader("Accept", "application/vnd.vimeo.*+json; version=3.2");
-    request.addHeader("Authorization", new StringBuffer(tokenType).append(" ").append(token).toString());
+    request.addHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
+    request.addHeader("Content-Type", "application/json");
+    request.addHeader("Authorization", new StringBuffer(tokenType).append(' ').append(token).toString());
     HttpEntity entity = null;
     if (params != null) {
       ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
