@@ -116,9 +116,9 @@ public class Vimeo {
     return apiRequest(videoEndpoint, HttpDelete.METHOD_NAME, null, null);
   }
 
-  public VimeoResponse setVideoThumb(String videoEndpoint, int time, boolean active) throws IOException {
+  public VimeoResponse setVideoThumb(String videoEndpoint, float time, boolean active) throws IOException {
     Map<String, String> params = new HashMap<String, String>();
-    params.put("time", Integer.toString(time));
+    params.put("time", Float.toString(time));
     params.put("active", Boolean.toString(active));
     return post(new StringBuffer(videoEndpoint).append("/pictures").toString(), params);
   }
