@@ -289,7 +289,6 @@ public class Vimeo {
       request = new HttpPatch(url);
     }
     request.addHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
-    request.addHeader("Content-Type", "application/json");
     request.addHeader("Authorization", new StringBuffer(tokenType).append(' ').append(token).toString());
     HttpEntity entity = null;
     if (params != null) {
