@@ -14,19 +14,6 @@
 		<maven>3.0.3</maven>
 	</prerequisites>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<source.version>1.6</source.version>
-		<target.version>1.6</target.version>
-		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-		<maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
-		<maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
-		<maven-resources-plugin.version>2.6</maven-resources-plugin.version>
-		<maven-release-plugin.version>2.5</maven-release-plugin.version>
-		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
-	</properties>
-
 	<licenses>
 		<license>
 			<name>MIT License</name>
@@ -38,11 +25,8 @@
 		<developer>
 			<name>Tonino Mendicino</name>
 			<email>tonino.mendicino@clickntap.com</email>
-			<url>http://www.clickntap.com</url>
-			<timezone>+1</timezone>
-			<roles>
-				<role>developer</role>
-			</roles>
+			<organization>Click'nTap</organization>
+			<organizationUrl>https://www.clickntap.com/</organizationUrl>
 		</developer>
 	</developers>
 
@@ -55,7 +39,7 @@
 		<repository>
 			<id>ossrh</id>
 			<name>Maven Central Staging Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</distributionManagement>
 
@@ -66,22 +50,30 @@
 		<tag>HEAD</tag>
 	</scm>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<source.version>1.8</source.version>
+		<target.version>1.8</target.version>
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
+		<maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+		<maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+		<maven-release-plugin.version>2.5</maven-release-plugin.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+	</properties>
+
+
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.3.6</version>
+			<version>4.5.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20140107</version>
+			<version>20180813</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -152,6 +144,17 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.3</version>
+						<configuration>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<useReleaseProfile>false</useReleaseProfile>
+							<releaseProfiles>release</releaseProfiles>
+							<goals>deploy</goals>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
@@ -177,6 +180,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -187,9 +191,19 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-
 </project>
