@@ -103,6 +103,11 @@ public class Vimeo {
     params.put("review_link", reviewLink ? "true" : "false");
     return apiRequest(videoEndpoint, HttpPatch.METHOD_NAME, params, null);
   }
+  
+  public VimeoResponse updateVideoMetadata(String videoEndpoint, Map<String, String> params)
+			throws IOException {
+		return apiRequest(videoEndpoint, HttpPatch.METHOD_NAME, params, null);
+	}
 
   public VimeoResponse addVideoPrivacyDomain(String videoEndpoint, String domain) throws ClientProtocolException, UnsupportedEncodingException, IOException {
     return apiRequest(new StringBuffer(videoEndpoint).append("/privacy/domains/").append(URLEncoder.encode(domain, "UTF-8")).toString(), HttpPut.METHOD_NAME, null, null);
