@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -109,7 +111,7 @@ public class Vimeo {
   }
 
   public VimeoResponse getVideoPrivacyDomains(String videoEndpoint) throws IOException {
-    return apiRequest(new StringBuffer(videoEndpoint).append("/privacy/domains").toString(), HttpGet.METHOD_NAME, null, null);
+     return apiRequest(new StringBuffer(videoEndpoint).append("/privacy/domains").toString(), HttpGet.METHOD_NAME, null, null);
   }
 
   public VimeoResponse removeVideo(String videoEndpoint) throws IOException {
@@ -291,8 +293,8 @@ public class Vimeo {
     request.addHeader("Accept", "application/vnd.vimeo.*+json;version=3.2");
     request.addHeader("Authorization", new StringBuffer(tokenType).append(' ').append(token).toString());
     HttpEntity entity = null;
+    ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
     if (params != null) {
-      ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
       for (String key : params.keySet()) {
         postParameters.add(new BasicNameValuePair(key, params.get(key)));
       }
@@ -301,6 +303,21 @@ public class Vimeo {
       entity = new InputStreamEntity(inputStream, ContentType.MULTIPART_FORM_DATA);
     }
     if (entity != null) {
+      if (request instanceof HttpGet) {
+        URIBuilder builder;
+        try {
+          // rebuild the request
+          builder = new URIBuilder(url);
+          builder.setParameters(postParameters);
+          request = new HttpGet(builder.build());
+          request.addHeader("Accept", "application/vnd.vimeo.*+json;version=3.2");
+          request.addHeader("Authorization", new StringBuffer(tokenType).append(' ').append(token).toString());
+        } catch (URISyntaxException e) {
+          // this should never happen, but...
+          throw new IOException("Exception converting url to uri", e);
+        }
+
+      }
       if (request instanceof HttpPost) {
         ((HttpPost) request).setEntity(entity);
       } else if (request instanceof HttpPatch) {
