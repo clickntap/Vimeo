@@ -178,7 +178,7 @@ public class Vimeo {
       uploadVideo(inputStream, response.getJson().getString("upload_link_secure"));
       response = endUploadVideo(response.getJson().getString("complete_uri"));
       if (response.getStatusCode() == 201) {
-        return response.getJson().getString("Location");
+        return response.getJson().getString("location");
       }
     }
     throw new VimeoException(new StringBuffer("HTTP Status Code: ").append(response.getStatusCode()).toString());
@@ -323,7 +323,7 @@ public class Vimeo {
     if (methodName.equals(HttpPut.METHOD_NAME) || methodName.equals(HttpDelete.METHOD_NAME)) {
       JSONObject out = new JSONObject();
       for (Header header : response.getAllHeaders()) {
-        out.put(header.getName(), header.getValue());
+        out.put(header.getName().toLowerCase(), header.getValue());
       }
       responseAsString = out.toString();
     } else if (statusCode != 204) {
@@ -338,7 +338,7 @@ public class Vimeo {
       json = new JSONObject(responseAsString);
       headers = new JSONObject();
       for (Header header : response.getAllHeaders()) {
-        headers.put(header.getName(), header.getValue());
+        headers.put(header.getName().toLowerCase(), header.getValue());
       }
     } catch (Exception e) {
       json = new JSONObject();
