@@ -1,4 +1,4 @@
-### Welcome to Java Vimeo API 3.x.
+### Welcome to Java Vimeo API 3.4.
 To use this api you’ll first need to register your app from Vimeo:
 
 https://developer.vimeo.com/apps
@@ -18,8 +18,7 @@ public class VimeoSample {
     Vimeo vimeo = new Vimeo("[token]"); 
     
     //add a video
-    boolean upgradeTo1080 = true;
-    String videoEndPoint = vimeo.addVideo(new File("/Users/tmendici/Downloads/Video.AVI"), upgradeTo1080);
+    String videoEndPoint = vimeo.addVideo(new File("/Users/tmendici/Downloads/Video.AVI"));
     
     //get video info
     VimeoResponse info = vimeo.getVideoInfo(videoEndPoint);
@@ -56,10 +55,10 @@ The class VideoResponse provides response code and json response, see Vimeo API 
 <dependency>
   <groupId>com.clickntap</groupId>
   <artifactId>vimeo</artifactId>
-  <version>1.13</version>
+  <version>2.0</version>
 </dependency>
 
 ```
 
 ### Support or Contact
-Having trouble with Java Vimeo API 3.x? Contact info@clickntap.com and we’ll help you sort it out.
+Having trouble with Java Vimeo API 3.4? Contact info@clickntap.com and we’ll help you sort it out.
